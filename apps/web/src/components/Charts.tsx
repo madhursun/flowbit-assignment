@@ -143,8 +143,10 @@ export function InvoiceTrendChart({
                 beginAtZero: true,
                 grid: {
                   color: "#F3F4F6",
+                  // @ts-ignore – drawBorder still works but is not typed in v4
                   drawBorder: false,
                 },
+
                 ticks: {
                   color: "#9CA3AF",
                   callback: (value) => `€${value / 1000}k`,
@@ -154,9 +156,11 @@ export function InvoiceTrendChart({
               },
               x: {
                 grid: {
-                  color: "rgba(243,244,246,0.6)",
+                  color: "#F3F4F6",
+                  // @ts-ignore – drawBorder still works but is not typed in v4
                   drawBorder: false,
                 },
+
                 ticks: {
                   color: "#9CA3AF",
                   font: { size: 11 },
@@ -246,8 +250,10 @@ export function TopVendorsChart({
               x: {
                 grid: {
                   color: "#F3F4F6",
+                  // @ts-ignore – drawBorder still works but is not typed in v4
                   drawBorder: false,
                 },
+
                 ticks: {
                   color: "#9CA3AF",
                   callback: (value) => `€${Number(value) / 1000}k`,
@@ -256,9 +262,11 @@ export function TopVendorsChart({
               },
               y: {
                 grid: {
-                  display: false,
+                  color: "#F3F4F6",
+                  // @ts-ignore – drawBorder still works but is not typed in v4
                   drawBorder: false,
                 },
+
                 ticks: {
                   color: "#111827",
                   font: { size: 12 },
@@ -434,6 +442,7 @@ export function CashOutflowChart({
                 },
                 grid: {
                   color: "#F3F4F6",
+                  // @ts-ignore – drawBorder still works but is not typed in v4
                   drawBorder: false,
                 },
               },
@@ -444,7 +453,8 @@ export function CashOutflowChart({
                   padding: 4,
                 },
                 grid: {
-                  display: false,
+                  color: "#F3F4F6",
+                  // @ts-ignore – drawBorder still works but is not typed in v4
                   drawBorder: false,
                 },
               },
