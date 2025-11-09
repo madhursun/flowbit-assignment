@@ -1,0 +1,98 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: assi-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: assiuser
+      POSTGRES_PASSWORD: assipass
+      POSTGRES_DB: assidb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U assiuser -d assidb"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      - assi-net
+
+  vanna:
+    build:
+      context: ./services/vanna
+    container_name: assi-vanna
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://assiuser:assipass@postgres:5432/assidb
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    working_dir: /usr/src/app
+    volumes:
+      - ./services/vanna:/usr/src/app
+    healthcheck:
+      # use curl to check the root endpoint; curl is installed in Dockerfile below
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    networks:
+      - assi-net
+
+  api:
+    build: ./apps/api
+    container_name: assi-api
+    restart: on-failure
+    depends_on:
+      - postgres
+      - vanna
+    environment:
+      # inside the Docker network use service hostnames:
+      DATABASE_URL: postgres://assiuser:assipass@postgres:5432/assidb
+      # Vanna service reachable by name:
+      VANNA_API_BASE_URL: http://vanna:8000
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    command: sh -c "sleep 3 && npm run dev"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    networks:
+      - assi-net
+
+  web:
+    build: ./apps/web
+    container_name: assi-web
+    restart: on-failure
+    depends_on:
+      - api
+    environment:
+      # inside container, api is reachable at http://api:4000
+      NEXT_PUBLIC_API_BASE: http://api:4000
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    command: sh -c "sleep 2 && npm run dev"
+    networks:
+      - assi-net
+
+volumes:
+  pgdata:
+
+networks:
+  assi-net:
+    driver: bridge

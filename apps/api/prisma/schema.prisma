@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vendor {
+  id        Int       @id @default(autoincrement())
+  vendor_id String    @unique
+  name      String
+  address   String?
+  invoices  Invoice[]
+}
+
+model Customer {
+  id          Int       @id @default(autoincrement())
+  customer_id String    @unique
+  name        String
+  address     String?
+  invoices    Invoice[]
+}
+
+model Invoice {
+  id           Int        @id @default(autoincrement())
+  invoice_id   String     @unique
+  vendor       Vendor     @relation(fields: [vendorId], references: [id])
+  vendorId     Int
+  customer     Customer   @relation(fields: [customerId], references: [id])
+  customerId   Int
+  date         DateTime
+  due_date     DateTime?
+  status       String
+  currency     String
+  total_amount Float
+  lineItems    LineItem[]
+  payments     Payment[]
+}
+
+model LineItem {
+  id          Int      @id @default(autoincrement())
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  invoiceId   Int
+  description String
+  quantity    Float
+  unit_price  Float
+  total       Float
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  invoiceId   Int
+  paid_at     DateTime
+  amount      Float
+  method      String?
+}

@@ -1,0 +1,24 @@
+# Node / Next.js
+node_modules
+.next
+dist
+.env
+.env.*
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Prisma
+*.db
+*.sqlite
+
+# Docker
+*.pid
+*.sock
+*.tar
+
+# OS
+.DS_Store
+Thumbs.db
