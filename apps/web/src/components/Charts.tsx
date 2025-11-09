@@ -123,8 +123,10 @@ export function InvoiceTrendChart({
                 bodyFont: { size: 12 },
                 callbacks: {
                   title: (ctx) => `${ctx[0].label}`,
-                  label: (ctx) =>
-                    `Total Spend: € ${ctx.parsed.y.toLocaleString()}`,
+                  label: (ctx) => {
+                    const y = ctx.parsed?.y ?? 0;
+                    return `Total Spend: € ${y.toLocaleString()}`;
+                  },
                 },
               },
             },
@@ -234,7 +236,8 @@ export function TopVendorsChart({
                 bodyFont: { size: 13 },
                 callbacks: {
                   label: function (context) {
-                    return `Vendor Spend: € ${context.parsed.x.toLocaleString()}`;
+                    const x = context.parsed?.x ?? 0;
+                    return `Vendor Spend: € ${x.toLocaleString()}`;
                   },
                 },
               },
