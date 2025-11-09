@@ -2,29 +2,33 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+// ✅ Define strong type
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+};
+
 export default function ChatWithDataPage() {
   const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState<
-    { role: "user" | "assistant"; content: string }[]
-  >([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000";
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!question.trim()) return;
 
-    const userMessage = { role: "user", content: question };
-    setMessages((prev) => [...prev, userMessage]);
+    const userMessage: Message = { role: "user", content: question };
+    setMessages((prev: Message[]) => [...prev, userMessage]);
     setQuestion("");
     setLoading(true);
 
     try {
       const res = await axios.post(`${API_BASE}/chat-with-data`, { question });
       const data = res.data;
-      let content = "";
 
+      let content = "";
       if (data.error) {
         content = `⚠️ ${data.error}`;
       } else if (data.results?.length) {
@@ -57,17 +61,20 @@ export default function ChatWithDataPage() {
             </table>
           </div>
         `;
-        content = `<p class="text-xs text-gray-500 mb-2">SQL generated:</p>
-        <pre class="bg-gray-900 text-green-400 rounded-lg p-3 text-xs overflow-x-auto mb-4">${data.sql}</pre>
-        <p class="text-xs text-gray-500 mb-1">Results:</p>${tableHTML}`;
+
+        content = `
+          <p class="text-xs text-gray-500 mb-2">SQL generated:</p>
+          <pre class="bg-gray-900 text-green-400 rounded-lg p-3 text-xs overflow-x-auto mb-4">${data.sql}</pre>
+          <p class="text-xs text-gray-500 mb-1">Results:</p>${tableHTML}`;
       } else {
         content = "No results found.";
       }
 
-      setMessages((prev) => [...prev, { role: "assistant", content: content }]);
+      const assistantMessage: Message = { role: "assistant", content };
+      setMessages((prev: Message[]) => [...prev, assistantMessage]);
     } catch (err: any) {
       console.error("Chat error:", err.message);
-      setMessages((prev) => [
+      setMessages((prev: Message[]) => [
         ...prev,
         { role: "assistant", content: "❌ Failed to connect to AI service." },
       ]);
