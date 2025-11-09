@@ -149,7 +149,11 @@ export function InvoiceTrendChart({
 
                 ticks: {
                   color: "#9CA3AF",
-                  callback: (value) => `€${value / 1000}k`,
+                  callback: (value) => {
+                    const num = Number(value) || 0;
+                    return `€${num / 1000}k`;
+                  },
+
                   font: { size: 11 },
                   padding: 6,
                 },
@@ -435,9 +439,11 @@ export function CashOutflowChart({
                 grace: "0%", // no extra top padding
                 ticks: {
                   color: "#9CA3AF",
-                  callback: function (value) {
-                    return `€${value / 1000}k`;
+                  callback: (value) => {
+                    const num = Number(value) || 0;
+                    return `€${num / 1000}k`;
                   },
+
                   padding: 6,
                 },
                 grid: {
