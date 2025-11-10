@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "npx prisma migrate deploy && tsx src/server.ts",
-    "migrate-deploy": "npx prisma migrate deploy",
     "seed": "npx tsx prisma/seed.ts"
   },
   "keywords": [],
