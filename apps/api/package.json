@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "start": "npx prisma migrate deploy && tsx src/server.ts",
+    "migrate-deploy": "npx prisma migrate deploy",
+    "seed": "npx tsx prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
